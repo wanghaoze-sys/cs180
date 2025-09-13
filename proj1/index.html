@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Proj1 - details</title>
+    <style>
+        
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.8;
+            color: #444;
+            background-color: #fafafa;
+            margin: 0;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px 40px;
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        h1, h2, h3 {
+            color: #2c3e50;
+            border-bottom: 1px solid #ecf0f1;
+            padding-bottom: 8px;
+        }
+        h1 {
+            font-size: 2.5em;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        h2 {
+            font-size: 1.8em;
+            margin-top: 40px;
+        }
+
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .img-container {
+            overflow: hidden; 
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .zoom-img {
+            width: 100%;
+            height: auto;
+            display: block;
+            border-radius: 8px;
+            transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94); 
+        }
+        .zoom-img:hover {
+            transform: scale(1.1); 
+        }
+
+        figcaption {
+            padding: 15px;
+            font-size: 0.9em;
+            color: #555;
+            text-align: center;
+        }
+
+        .back-link {
+            display: block;
+            margin-top: 40px;
+            text-align: center;
+            font-size: 1.1em;
+            color: #3498db;
+            text-decoration: none;
+        }
+        .back-link:hover {
+            text-decoration: underline;
+        }
+        
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Project1</h1>
+
+        <h2>Part1: Method</h2>
+        <p>In this project, we need to build an algorithm to align the RGB channels of an image, record the offsets, and generate the aligned color image. I used the Python library skimage for image reading, writing, scaling, and cropping, and employed numpy to calculate the image alignment accuracy.</p>
+        <p>For low-resolution images, I simply enumerate image offsets within the range (-15, 15), calculate the Euclidean distance between pixel values in the two color channels, with smaller values indicating higher alignment accuracy.
+            For high-resolution images, I compressed the source file three times to obtain images at 1/2, 1/4, and 1/8 scale. I enumerated alignment parameters on the smallest image, applied them to the next larger layer, and then fine-tuned the offset parameters within the range (-2, 2) on the new layer. This iterative process yielded the parameters for the original-sized image.
+            However, in practice, I found that the color channels of high-resolution images did not align well. This is because calculating the Euclidean distance between two color channels does not always accurately assess image alignment, as the brightness levels of different color channels vary. Therefore, I computed the image's gradient matrix and used the Euclidean distance of gradients to evaluate alignment, resulting in significantly improved image alignment. This improvement is evident in the detailed comparison image below. Of course, the improved algorithm remains susceptible to interference from high-frequency noise, resulting in some ghosting artifacts. I plan to apply Gaussian filtering in subsequent iterations to reduce image noise, which may enhance the overall alignment quality.</p>
+        <div class="gallery">
+            <div class="img-container">
+                <img src="imgs/emir_level_1_proc.jpg" alt="img1" class="zoom-img">
+                <figcaption>Original</figcaption>
+            </div>
+            <div class="img-container">
+                <img src="imgs/emir_grad_level_1_proc.jpg" alt="img2" class="zoom-img">
+                <figcaption>Gradient</figcaption>
+            </div>
+        </div>
+        <div class="gallery">
+            <div class="img-container">
+                <img src="imgs/church_level_1_proc.jpg" alt="img3" class="zoom-img">
+                <figcaption>Original</figcaption>
+            </div>
+            <div class="img-container">
+                <img src="imgs/church_grad_level_1_proc.jpg" alt="img4" class="zoom-img">
+                <figcaption>Gradient</figcaption>
+            </div>
+        </div>
+
+        <h2>Part2: Bias Arguments</h2>
+        <p>The table below records the offset parameters for all images.</p>
+
+        <table border="1">
+            <thead>
+              <tr>
+                <th rowspan="2">filename</th>
+                <th colspan="2">G-B bias</th>
+                <th colspan="2">R-B bias</th>
+              </tr>
+              <tr>
+                <th>x1</th>
+                <th>y1</th>
+                <th>x2</th>
+                <th>y2</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>cathedral.jpg</td>
+                <td>2</td>
+                <td>5</td>
+                <td>3</td>
+                <td>12</td>
+              </tr>
+              <tr>
+                <td>monastery.jpg</td>
+                <td>2</td>
+                <td>-3</td>
+                <td>2</td>
+                <td>3</td>
+              </tr>
+              <tr>
+                <td>tobolsk.jpg</td>
+                <td>2</td>
+                <td>3</td>
+                <td>3</td>
+                <td>6</td>
+              </tr>
+              <tr>
+                <td>emir.tif</td>
+                <td>10</td>
+                <td>34</td>
+                <td>26</td>
+                <td>94</td>
+              </tr>
+              <tr>
+                <td>church.tif</td>
+                <td>-5</td>
+                <td>14</td>
+                <td>-5</td>
+                <td>56</td>
+              </tr>
+              <tr>
+                <td colspan="5">(below processed with grad func)</td>
+              </tr>
+              <tr>
+                <td>emir.tif</td>
+                <td>22</td>
+                <td>49</td>
+                <td>40</td>
+                <td>107</td>
+              </tr>
+              <tr>
+                <td>church.tif</td>
+                <td>-2</td>
+                <td>25</td>
+                <td>-14</td>
+                <td>56</td>
+              </tr>
+              <tr>
+                <td>harvesters.tif</td>
+                <td>17</td>
+                <td>60</td>
+                <td>4</td>
+                <td>122</td>
+              </tr>
+              <tr>
+                <td>icon.tif</td>
+                <td>16</td>
+                <td>40</td>
+                <td>23</td>
+                <td>90</td>
+              </tr>
+              <tr>
+                <td>italil.tif</td>
+                <td>16</td>
+                <td>37</td>
+                <td>35</td>
+                <td>76</td>
+              </tr>
+              <tr>
+                <td>siren.tif</td>
+                <td>-8</td>
+                <td>48</td>
+                <td>-24</td>
+                <td>95</td>
+              </tr>
+              <tr>
+                <td>melons.tif</td>
+                <td>5</td>
+                <td>78</td>
+                <td>-22</td>
+                <td>120</td>
+              </tr>
+              <tr>
+                <td>lugano.tif</td>
+                <td>-11</td>
+                <td>41</td>
+                <td>-29</td>
+                <td>90</td>
+              </tr>
+              <tr>
+                <td>three_generations.tif</td>
+                <td>0</td>
+                <td>54</td>
+                <td>7</td>
+                <td>106</td>
+              </tr>
+              <tr>
+                <td>self-portrait.tif</td>
+                <td>30</td>
+                <td>79</td>
+                <td>-2</td>
+                <td>130</td>
+              </tr>
+              <tr>
+                <td>lastochikino.tif</td>
+                <td>-3</td>
+                <td>-3</td>
+                <td>-8</td>
+                <td>71</td>
+              </tr>
+              <tr>
+                <td>sunset.tif (self-choice)</td>
+                <td>-12</td>
+                <td>52</td>
+                <td>-21</td>
+                <td>110</td>
+              </tr>
+              <tr>
+                <td>double_poppies.tif (self-choice)</td>
+                <td>8</td>
+                <td>8</td>
+                <td>13</td>
+                <td>59</td>
+              </tr>
+              <tr>
+                <td>conservatory.tif (self-choice)</td>
+                <td>27</td>
+                <td>59</td>
+                <td>34</td>
+                <td>126</td>
+              </tr>
+            </tbody>
+        </table>
+
+        <h2>Part3: Gallery</h2>
+
+        <div class="gallery">
+            <div class="img-container">
+                <img src="imgs/cathedral_color.jpg" alt="cathedral.jpg" class="zoom-img">
+                <figcaption>cathedral.jpg</figcaption>
+            </div>
+            <div class="img-container">
+                <img src="imgs/monastery_color.jpg" alt="monastery.jpg" class="zoom-img">
+                <figcaption>monastery.jpg</figcaption>
+            </div>
+            <div class="img-container">
+                <img src="imgs/tobolsk_color.jpg" alt="tobolsk_color.jpg" class="zoom-img">
+                <figcaption>tobolsk_color.jpg</figcaption>
+            </div>
+        </div>
+        <div class="gallery">
+            <div class="img-container">
+                <img src="imgs/church_grad_level_2.jpg" alt="church.jpg" class="zoom-img">
+                <figcaption>church.jpg</figcaption>
+            </div>
+            <div class="img-container">
+                <img src="imgs/emir_grad_level_2.jpg" alt="emir.jpg" class="zoom-img">
+                <figcaption>emir.jpg</figcaption>
+            </div>
+            <div class="img-container">
+                <img src="imgs/italil_grad_level_2.jpg" alt="italil.jpg" class="zoom-img">
+                <figcaption>italil.jpg</figcaption>
+            </div>
+        </div>
+        <div class="gallery">
+            <div class="img-container">
+                <img src="imgs/melons_grad_level_2.jpg" alt="melons.jpg" class="zoom-img">
+                <figcaption>melons.jpg</figcaption>
+            </div>
+            <div class="img-container">
+                <img src="imgs/double_poppies_grad_level_2.jpg" alt="double_poppies.jpg" class="zoom-img">
+                <figcaption>double_poppies.jpg</figcaption>
+            </div>
+            <div class="img-container">
+                <img src="imgs/sunset_grad_level_2.jpg" alt="sunset.jpg" class="zoom-img">
+                <figcaption>sunset.jpg</figcaption>
+            </div>
+        </div>
+        
+        <a href="../" class="back-link">Back to home page</a>
+    </div>
+
+</body>
+</html>
