@@ -92,25 +92,30 @@
         <h2>Part1: Method</h2>
         <p>In this project, we need to build an algorithm to align the RGB channels of an image, record the offsets, and generate the aligned color image. I used the Python library skimage for image reading, writing, scaling, and cropping, and employed numpy to calculate the image alignment accuracy.</p>
         <p>For low-resolution images, I simply enumerate image offsets within the range (-15, 15), calculate the Euclidean distance between pixel values in the two color channels, with smaller values indicating higher alignment accuracy.
-            For high-resolution images, I compressed the source file three times to obtain images at 1/2, 1/4, and 1/8 scale. I enumerated alignment parameters on the smallest image, applied them to the next larger layer, and then fine-tuned the offset parameters within the range (-2, 2) on the new layer. This iterative process yielded the parameters for the original-sized image.
-            However, in practice, I found that the color channels of high-resolution images did not align well. This is because calculating the Euclidean distance between two color channels does not always accurately assess image alignment, as the brightness levels of different color channels vary. Therefore, I computed the image's gradient matrix and used the Euclidean distance of gradients to evaluate alignment, resulting in significantly improved image alignment. This improvement is evident in the detailed comparison image below. Of course, the improved algorithm remains susceptible to interference from high-frequency noise, resulting in some ghosting artifacts. I plan to apply Gaussian filtering in subsequent iterations to reduce image noise, which may enhance the overall alignment quality.</p>
+            
+          For high-resolution images, I compressed the source file three times to obtain images at 1/2, 1/4, and 1/8 scale. I enumerated alignment parameters on the smallest image, applied them to the next larger layer, and then fine-tuned the offset parameters within the range (-2, 2) on the new layer. This iterative process yielded the parameters for the original-sized image.
+          
+          However, in practice, I found that the color channels of high-resolution images did not align well. This is because calculating the Euclidean distance between two color channels does not always accurately assess image alignment, as the brightness levels of different color channels vary. 
+          Therefore, I computed the image's gradient matrix and used the Euclidean distance of gradients to evaluate alignment, resulting in significantly improved image alignment. This improvement is evident in the detailed comparison image below. 
+
+          (Updated) The improved image alignment algorithm still exhibits ghosting artifacts, which I believe may be caused by edge interference in the images. Therefore, I expanded the cropping range at the image edges during alignment—increasing it from 15 pixels (search radius) at low precision to 10% of the image size—thereby further enhancing alignment accuracy.</p>
         <div class="gallery">
             <div class="img-container">
-                <img src="imgs/emir_level_1_proc.jpg" alt="img1" class="zoom-img">
+                <img src="imgs/emir_level_3_proc.jpg" alt="img1" class="zoom-img">
                 <figcaption>Original</figcaption>
             </div>
             <div class="img-container">
-                <img src="imgs/emir_grad_level_1_proc.jpg" alt="img2" class="zoom-img">
+                <img src="imgs/emir_grad_level_3_proc.jpg" alt="img2" class="zoom-img">
                 <figcaption>Gradient</figcaption>
             </div>
         </div>
         <div class="gallery">
             <div class="img-container">
-                <img src="imgs/church_level_1_proc.jpg" alt="img3" class="zoom-img">
+                <img src="imgs/church_level_3_proc.jpg" alt="img3" class="zoom-img">
                 <figcaption>Original</figcaption>
             </div>
             <div class="img-container">
-                <img src="imgs/church_grad_level_1_proc.jpg" alt="img4" class="zoom-img">
+                <img src="imgs/church_grad_level_3_proc.jpg" alt="img4" class="zoom-img">
                 <figcaption>Gradient</figcaption>
             </div>
         </div>
@@ -122,14 +127,17 @@
             <thead>
               <tr>
                 <th rowspan="2">filename</th>
-                <th colspan="2">G-B bias</th>
-                <th colspan="2">R-B bias</th>
+                <th colspan="4">Classical</th>
+                <th colspan="4">Gradient</th>
+                <th colspan="4">Cropped</th>
               </tr>
               <tr>
-                <th>x1</th>
-                <th>y1</th>
-                <th>x2</th>
-                <th>y2</th>
+                <th colspan="2">G bias</th>
+                <th colspan="2">R bias</th>
+                <th colspan="2">G bias</th>
+                <th colspan="2">R bias</th>
+                <th colspan="2">G bias</th>
+                <th colspan="2">R bias</th>
               </tr>
             </thead>
             <tbody>
@@ -139,6 +147,8 @@
                 <td>5</td>
                 <td>3</td>
                 <td>12</td>
+                <th colspan="4">-</th>
+                <th colspan="4">-</th>
               </tr>
               <tr>
                 <td>monastery.jpg</td>
@@ -146,6 +156,8 @@
                 <td>-3</td>
                 <td>2</td>
                 <td>3</td>
+                <th colspan="4">-</th>
+                <th colspan="4">-</th>
               </tr>
               <tr>
                 <td>tobolsk.jpg</td>
@@ -153,6 +165,8 @@
                 <td>3</td>
                 <td>3</td>
                 <td>6</td>
+                <th colspan="4">-</th>
+                <th colspan="4">-</th>
               </tr>
               <tr>
                 <td>emir.tif</td>
@@ -160,6 +174,14 @@
                 <td>34</td>
                 <td>26</td>
                 <td>94</td>
+                <td>22</td>
+                <td>49</td>
+                <td>40</td>
+                <td>107</td>
+                <td>24</td>
+                <td>49</td>
+                <td>40</td>
+                <td>107</td>
               </tr>
               <tr>
                 <td>church.tif</td>
@@ -167,104 +189,158 @@
                 <td>14</td>
                 <td>-5</td>
                 <td>56</td>
-              </tr>
-              <tr>
-                <td colspan="5">(below processed with grad func)</td>
-              </tr>
-              <tr>
-                <td>emir.tif</td>
-                <td>22</td>
-                <td>49</td>
-                <td>40</td>
-                <td>107</td>
-              </tr>
-              <tr>
-                <td>church.tif</td>
                 <td>-2</td>
                 <td>25</td>
                 <td>-14</td>
                 <td>56</td>
+                <td>4</td>
+                <td>25</td>
+                <td>-4</td>
+                <td>58</td>
               </tr>
               <tr>
                 <td>harvesters.tif</td>
+                <th colspan="4">-</th>
                 <td>17</td>
                 <td>60</td>
                 <td>4</td>
                 <td>122</td>
+                <td>17</td>
+                <td>60</td>
+                <td>14</td>
+                <td>124</td>
               </tr>
               <tr>
                 <td>icon.tif</td>
+                <th colspan="4">-</th>
                 <td>16</td>
                 <td>40</td>
+                <td>23</td>
+                <td>90</td>
+                <td>17</td>
+                <td>42</td>
                 <td>23</td>
                 <td>90</td>
               </tr>
               <tr>
                 <td>italil.tif</td>
+                <th colspan="4">-</th>
                 <td>16</td>
                 <td>37</td>
                 <td>35</td>
                 <td>76</td>
+                <td>22</td>
+                <td>38</td>
+                <td>36</td>
+                <td>77</td>
               </tr>
               <tr>
                 <td>siren.tif</td>
+                <th colspan="4">-</th>
                 <td>-8</td>
                 <td>48</td>
                 <td>-24</td>
                 <td>95</td>
+                <td>-6</td>
+                <td>49</td>
+                <td>-24</td>
+                <td>96</td>
               </tr>
               <tr>
                 <td>melons.tif</td>
+                <th colspan="4">-</th>
                 <td>5</td>
                 <td>78</td>
                 <td>-22</td>
                 <td>120</td>
+                <td>10</td>
+                <td>80</td>
+                <td>14</td>
+                <td>134</td>
               </tr>
               <tr>
                 <td>lugano.tif</td>
+                <th colspan="4">-</th>
                 <td>-11</td>
                 <td>41</td>
                 <td>-29</td>
                 <td>90</td>
+                <td>-17</td>
+                <td>41</td>
+                <td>-29</td>
+                <td>92</td>
               </tr>
               <tr>
                 <td>three_generations.tif</td>
+                <th colspan="4">-</th>
                 <td>0</td>
                 <td>54</td>
                 <td>7</td>
                 <td>106</td>
+                <td>12</td>
+                <td>54</td>
+                <td>9</td>
+                <td>111</td>
               </tr>
               <tr>
                 <td>self-portrait.tif</td>
+                <th colspan="4">-</th>
                 <td>30</td>
                 <td>79</td>
                 <td>-2</td>
                 <td>130</td>
+                <td>29</td>
+                <td>78</td>
+                <td>54</td>
+                <td>134</td>
               </tr>
               <tr>
                 <td>lastochikino.tif</td>
+                <th colspan="4">-</th>
                 <td>-3</td>
                 <td>-3</td>
                 <td>-8</td>
                 <td>71</td>
+                <td>-2</td>
+                <td>-3</td>
+                <td>-8</td>
+                <td>76</td>
               </tr>
               <tr>
-                <td>sunset.tif (self-choice)</td>
+                <td colspan="13">(below are self-choice)</td>
+              </tr>
+              <tr>
+                <td>sunset.tif</td>
+                <th colspan="4">-</th>
                 <td>-12</td>
                 <td>52</td>
                 <td>-21</td>
                 <td>110</td>
+                <td>26</td>
+                <td>53</td>
+                <td>-14</td>
+                <td>119</td>
               </tr>
               <tr>
-                <td>double_poppies.tif (self-choice)</td>
+                <td>double_poppies.tif</td>
+                <th colspan="4">-</th>
                 <td>8</td>
                 <td>8</td>
                 <td>13</td>
                 <td>59</td>
+                <td>8</td>
+                <td>8</td>
+                <td>14</td>
+                <td>60</td>
               </tr>
               <tr>
-                <td>conservatory.tif (self-choice)</td>
+                <td>conservatory.tif</td>
+                <th colspan="4">-</th>
                 <td>27</td>
+                <td>59</td>
+                <td>34</td>
+                <td>126</td>
+                <td>28</td>
                 <td>59</td>
                 <td>34</td>
                 <td>126</td>
