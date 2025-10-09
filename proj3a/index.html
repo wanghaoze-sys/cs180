@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Proj2 - details</title>
+    <style>
+        
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif, Consolas, monospace;
+            line-height: 1.8;
+            color: #444;
+            background-color: #fafafa;
+            margin: 0;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px 40px;
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        h1, h2, h3 {
+            color: #2c3e50;
+            border-bottom: 1px solid #ecf0f1;
+            padding-bottom: 8px;
+        }
+        h1 {
+            font-size: 2.5em;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        h2 {
+            font-size: 1.8em;
+            margin-top: 40px;
+        }
+
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .img-container {
+            overflow: hidden; 
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .zoom-img {
+            width: 100%;
+            height: auto;
+            display: block;
+            border-radius: 8px;
+            transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94); 
+        }
+        .zoom-img:hover {
+            transform: scale(1.1); 
+        }
+
+        figcaption {
+            padding: 15px;
+            font-size: 0.9em;
+            color: #555;
+            text-align: center;
+        }
+
+        .back-link {
+            display: block;
+            margin-top: 40px;
+            text-align: center;
+            font-size: 1.1em;
+            color: #3498db;
+            text-decoration: none;
+        }
+        .back-link:hover {
+            text-decoration: underline;
+        }
+        
+        .code-block {
+            font-family: Consolas, monospace;
+            background-color: #f5f5f5;
+            color: #333;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 16px;
+            overflow-x: auto;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Project3A</h1>
+        <p>The first part of this project implements image fusion based on manually selected points. By manually marking alignment coordinate points on two or more images, the projection transformation matrix H is solved using the least squares method. The transformed images are then re-interpolated and processed with a Laplace pyramid to handle details, thereby achieving the most seamless image fusion possible.</p>
+        <h2>Part 1: Photos</h2>
+        <p>Below are two sets of photos that satisfy the projection transformation. One set depicts indoor scenes, while the other shows outdoor scenes.</p>
+        <div class="gallery">
+            <div class="img-container">
+                <img src="imgs/mosaic_left.jpg" alt="mosaic_left" class="zoom-img">
+                <figcaption>Left</figcaption>
+            </div>
+            <div class="img-container">
+                <img src="imgs/mosaic_right.jpg" alt="mosaic_right" class="zoom-img">
+                <figcaption>Right</figcaption>
+            </div>
+        </div>
+        <div class="gallery">
+            <div class="img-container">
+                <img src="imgs/mosaic_bottom.jpg" alt="mosaic_bottom" class="zoom-img">
+                <figcaption>Bottom</figcaption>
+            </div>
+            <div class="img-container">
+                <img src="imgs/mosaic_top.jpg" alt="mosaic_top" class="zoom-img">
+                <figcaption>Top</figcaption>
+            </div>
+        </div>
+
+        <h2>Part 2 & 3: Compute the transformation matrix H to correct the image</h2>
+        <p>This section demonstrates rectangular correction of specific regions within a single image and presents the corresponding transformation matrix H.</p>
+        <p>The corrected images were processed using both nearest-neighbor interpolation and bilinear interpolation. It can be observed that the bilinear interpolation produces smoother image transitions.</p>
+        <div class="gallery">
+            <div class="img-container">
+                <img src="imgs/Figure_1.png" alt="Figure_1" class="zoom-img">
+                <figcaption>Figure 1</figcaption>
+            </div>
+        </div>
+
+        <table border="1" style="border-collapse: collapse; width: 100%;">
+            <caption style="font-weight: bold; padding: 5px;">H1</caption>
+            <tbody>
+              <tr>
+                <td style="padding: 5px;">1.75516195e+00</td>
+                <td style="padding: 5px;">6.42132419e-02</td>
+                <td style="padding: 5px;">-1.35519174e+03</td>
+              </tr>
+              <tr>
+                <td style="padding: 5px;">-1.26960493e-01</td>
+                <td style="padding: 5px;">3.55489381e+00</td>
+                <td style="padding: 5px;">-1.43055557e+03</td>
+              </tr>
+              <tr>
+                <td style="padding: 5px;">-1.48861421e-04</td>
+                <td style="padding: 5px;">2.03026156e-03</td>
+                <td style="padding: 5px;">1.00000000e+00</td>
+              </tr>
+            </tbody>
+        </table>
+
+        <div class="gallery">
+            <div class="img-container">
+                <img src="imgs/Figure_2.png" alt="Figure_2" class="zoom-img">
+                <figcaption>Figure 2</figcaption>
+            </div>
+        </div>
+
+        <table border="1" style="border-collapse: collapse; width: 100%;">
+            <caption style="font-weight: bold; padding: 5px;">H2</caption>
+            <tbody>
+              <tr>
+                <td style="padding: 5px;">9.51131075e-01</td>
+                <td style="padding: 5px;">-5.60487955e-01</td>
+                <td style="padding: 5px;">1.73779740e+02</td>
+              </tr>
+              <tr>
+                <td style="padding: 5px;">5.05655676e-01</td>
+                <td style="padding: 5px;">5.21708237e-01</td>
+                <td style="padding: 5px;">-1.93206290e+02</td>
+              </tr>
+              <tr>
+                <td style="padding: 5px;">-1.15256805e-03</td>
+                <td style="padding: 5px;">1.18621294e-04</td>
+                <td style="padding: 5px;">1.00000000e+00</td>
+              </tr>
+            </tbody>
+        </table>
+
+        <h2>Part 4: Image mosaicing</h2>
+        <p>This section showcases the results of image mosaicing using the previously mentioned indoor and outdoor images.</p>
+        <p>The left side shows the directly overlaid image, while the right side displays the image processed using the Laplace pyramid. Different masks were applied depending on whether the images were stacked horizontally or vertically. </p>
+        <p>For stitching multiple images, the mask configuration becomes more complex.</p>
+        
+        <div class="gallery">
+            <div class="img-container">
+                <img src="imgs/Figure_3.png" alt="Figure_3" class="zoom-img">
+                <figcaption>Figure 3</figcaption>
+            </div>
+        </div>
+        <div class="gallery">
+            <div class="img-container">
+                <img src="imgs/Figure_4.png" alt="Figure_4" class="zoom-img">
+                <figcaption>Figure 4</figcaption>
+            </div>
+        </div>
+        <div class="gallery">
+            <div class="img-container">
+                <img src="imgs/Figure_5.png" alt="Figure_5" class="zoom-img">
+                <figcaption>Figure 5</figcaption>
+            </div>
+        </div>
+        <div class="gallery">
+            <div class="img-container">
+                <img src="imgs/Figure_6.png" alt="Figure_6" class="zoom-img">
+                <figcaption>Figure 6</figcaption>
+            </div>
+        </div>
+
+        <a href="../" class="back-link">Back to home page</a>
+    </div>
+
+</body>
+</html>
