@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Proj3A - details</title>
+    <title>Proj3 - details</title>
     <style>
         
         body {
@@ -98,9 +98,10 @@
 <body>
 
     <div class="container">
-        <h1>Project3A</h1>
+        <h1>Project3</h1>
+        <h2>--- Part One ---</h2>
         <p>The first part of this project implements image fusion based on manually selected points. By manually marking alignment coordinate points on two or more images, the projection transformation matrix H is solved using the least squares method. The transformed images are then re-interpolated and processed with a Laplace pyramid to handle details, thereby achieving the most seamless image fusion possible.</p>
-        <h2>Part 1: Photos</h2>
+        <h2>A.1: Photos</h2>
         <p>Below are two sets of photos that satisfy the projection transformation. One set depicts indoor scenes, while the other shows outdoor scenes.</p>
         <div class="gallery">
             <div class="img-container">
@@ -123,7 +124,7 @@
             </div>
         </div>
 
-        <h2>Part 2 & 3: Compute the transformation matrix H to correct the image</h2>
+        <h2>A.2 & A.3: Compute the transformation matrix H to correct the image</h2>
         <p>This section demonstrates rectangular correction of specific regions within a single image and presents the corresponding transformation matrix H.</p>
         <p>The corrected images were processed using both nearest-neighbor interpolation and bilinear interpolation. It can be observed that the bilinear interpolation produces smoother image transitions.</p>
         <div class="gallery">
@@ -182,7 +183,7 @@
             </tbody>
         </table>
 
-        <h2>Part 4: Image mosaicing</h2>
+        <h2>A.4: Image mosaicing</h2>
         <p>This section showcases the results of image mosaicing using the previously mentioned indoor and outdoor images.</p>
         <p>The left side shows the directly overlaid image, while the right side displays the image processed using the Laplace pyramid. Different masks were applied depending on whether the images were stacked horizontally or vertically. </p>
         <p>For stitching multiple images, the mask configuration becomes more complex.</p>
@@ -212,6 +213,58 @@
             </div>
         </div>
 
+        <h2>--- Part Two ---</h2>
+        <p>Part Two employs Harris corner detection and ANMS to automatically acquire image feature points, extract surrounding feature points, and perform blur sampling and matching to achieve automated image fusion.</p>
+        <h2>B.1: Harris Corner Detection</h2>
+        <p>The following diagram displays Harris corners in the sample image, along with the 500 optimal feature points obtained using ANMS.</p>
+        <div class="gallery">
+            <div class="img-container">
+                <img src="imgs/Features_0.png" alt="harris_corners" class="zoom-img">
+                <figcaption>Harris Corners</figcaption>
+            </div>
+        </div>
+        <h2>B.2 Feature Descriptor Extraction</h2>
+        <p>The following images show the sampling around three matched feature points. For easier observation, the feature regions have not been blurred in the images.</p>
+        <div class="gallery">
+            <div class="img-container">
+                <img src="imgs/Features_00.png" alt="feature_descriptor_1" class="zoom-img">
+                <figcaption>Feature Points</figcaption>
+            </div>
+        </div>
+        <h2>B.3 Feature Matching</h2>
+        <p>The following displays matched feature point pairs in several example images.</p>
+        <div class="gallery">
+            <div class="img-container">
+                <img src="imgs/Match_2.png" alt="feature_descriptor_1" class="zoom-img">
+                <figcaption>Matching Points (Group 1)</figcaption>
+            </div>
+        </div>
+        <div class="gallery">
+            <div class="img-container">
+                <img src="imgs/Match_1.png" alt="feature_descriptor_1" class="zoom-img">
+                <figcaption>Matching Points (Group 2)</figcaption>
+            </div>
+        </div>
+        <h2>B.4 RANSAC for Robust Homography</h2>
+        <p>The following displays a comparison of the stitched images, where the manual section uses the code from Part One, and the automatic section employs the transformation matrix calculated by RANSAC. For easier comparison, pixel fusion did not utilize the Laplace pyramid; instead, the average value of corresponding pixels in the two images was directly taken. Automatic stitching effectively improved stitching accuracy and reduced ghosting.</p>
+        <div class="gallery">
+            <div class="img-container">
+                <img src="imgs/Compare_2.png" alt="manual_stitching" class="zoom-img">
+                <figcaption>Compare 1</figcaption>
+            </div>
+        </div>
+        <div class="gallery">
+            <div class="img-container">
+                <img src="imgs/Compare_1.png" alt="manual_stitching" class="zoom-img">
+                <figcaption>Compare 2</figcaption>
+            </div>
+        </div>
+        <div class="gallery">
+            <div class="img-container">
+                <img src="imgs/Compare_3.png" alt="manual_stitching" class="zoom-img">
+                <figcaption>Compare 3 (stitching of 3 imgs)</figcaption>
+            </div>
+        </div>
         <a href="../" class="back-link">Back to home page</a>
     </div>
 
